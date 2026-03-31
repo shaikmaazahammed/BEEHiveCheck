@@ -6,7 +6,6 @@ from google.oauth2.service_account import Credentials
 from datetime import datetime
 import numpy as np
 from PIL import Image
-import pytesseract
 import io
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
@@ -20,59 +19,108 @@ st.markdown("""
 .stApp { background-color: #0e0e0e; color: white; font-family: 'Segoe UI', sans-serif; }
 img { filter: drop-shadow(0px 0px 10px rgba(250,213,27,0.6)); transition: 0.3s; }
 img:hover { filter: drop-shadow(0px 0px 20px rgba(250,213,27,0.9)); }
-.header-title { font-family: 'Sreda', serif; font-size: 44px; color: white; text-shadow: 0 0 12px rgba(250,213,27,0.4); }
-.subtitle { text-align: center; color: #aaa; font-size: 15px; margin-top: -8px; }
-.divider { height: 1px; background: linear-gradient(90deg, transparent, #fad51b, transparent); margin-top: 10px; }
-div.stButton > button { background: linear-gradient(135deg, #fad51b, #f5c400); color: black; border-radius: 10px; font-weight: 600; padding: 10px 20px; border: none; }
-div.stButton > button:hover { transform: translateY(-2px); box-shadow: 0px 8px 20px rgba(250,213,27,0.4); }
-.stTextInput input, .stTextArea textarea { background-color: #1a1a1a; color: white; border: 1px solid #333; border-radius: 8px; }
-.footer { text-align:center; color:#888; font-size:14px; margin-top:40px; padding-top:20px; border-top:1px solid #333; }
-.result-box { border-radius: 10px; padding: 12px 16px; font-size: 14px; margin: 4px 0; }
-.result-ok { background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.3); color: #4ade80; }
-.result-warn { background: rgba(250,213,27,0.12); border: 1px solid rgba(250,213,27,0.3); color: #fad51b; }
-.result-err { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3); color: #f87171; }
-.swatch-row { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
-.swatch { display: inline-block; width: 18px; height: 18px; border-radius: 4px; border: 1px solid #555; }
+.bee-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0 4px;
+}
+.bee-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+.bee-header-row img {
+    width: 90px;
+    filter: drop-shadow(0px 0px 10px rgba(250,213,27,0.6));
+}
+.header-title {
+    font-family: 'Sreda', serif;
+    font-size: 44px;
+    color: white;
+    text-shadow: 0 0 12px rgba(250,213,27,0.4);
+    line-height: 1;
+}
+.subtitle {
+    text-align: center;
+    color: #aaa;
+    font-size: 15px;
+    margin-top: 6px;
+}
+.divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #fad51b, transparent);
+    margin-top: 10px;
+}
+div.stButton > button {
+    background: linear-gradient(135deg, #fad51b, #f5c400);
+    color: black;
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: none;
+}
+div.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 8px 20px rgba(250,213,27,0.4);
+}
+.stTextInput input, .stTextArea textarea {
+    background-color: #1a1a1a;
+    color: white;
+    border: 1px solid #333;
+    border-radius: 8px;
+}
+.footer {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+.result-box  { border-radius: 10px; padding: 12px 16px; font-size: 14px; margin: 4px 0; }
+.result-ok   { background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.3); color: #4ade80; }
+.result-warn { background: rgba(250,213,27,0.12);  border: 1px solid rgba(250,213,27,0.3); color: #fad51b; }
+.swatch-row  { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.swatch      { display: inline-block; width: 18px; height: 18px; border-radius: 4px; border: 1px solid #555; }
 </style>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-# 🐝 HEADER
+# 🐝 HEADER — centered via HTML, not nested columns
 # ─────────────────────────────────────────────
-col1, col2, col3 = st.columns([2, 6, 2])
-with col2:
-    h1, h2 = st.columns([1.5, 6])
-    with h1:
-        st.image("assets/logo.png", width=110)
-    with h2:
-        st.markdown('<div class="header-title">BEEHiveCheck</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitle">Content Quality Control System</div>', unsafe_allow_html=True)
-    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+_, center_col, _ = st.columns([1, 4, 1])
+with center_col:
+    st.markdown("""
+    <div class="bee-header">
+        <div class="bee-header-row">
+            <img src="app/static/logo.png" />
+            <span class="header-title">BEEHiveCheck</span>
+        </div>
+        <div class="subtitle">Content Quality Control System</div>
+        <div class="divider"></div>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.divider()
 
 # ─────────────────────────────────────────────
-# 🎨 BRAND COLOR PALETTE (from brand guidelines)
+# 🎨 BRAND COLOR PALETTE
 # ─────────────────────────────────────────────
 BRAND_COLORS = [
-    {"name": "Primary Yellow",        "rgb": (250, 213, 27),  "hex": "#fad51b"},
-    {"name": "Primary Purple",        "rgb": (58,  42,  109), "hex": "#3a2a6d"},
-    {"name": "Secondary Lilac",       "rgb": (228, 205, 220), "hex": "#e4cddc"},
-    {"name": "Secondary Purple Light","rgb": (158, 140, 189), "hex": "#9e8cbd"},
-    {"name": "Secondary Off-white",   "rgb": (248, 245, 247), "hex": "#f8f5f7"},
-    {"name": "Secondary Dark",        "rgb": (50,  50,  50),  "hex": "#323232"},
+    {"name": "Primary Yellow",         "rgb": (250, 213, 27),  "hex": "#fad51b"},
+    {"name": "Primary Purple",         "rgb": (58,  42,  109), "hex": "#3a2a6d"},
+    {"name": "Secondary Lilac",        "rgb": (228, 205, 220), "hex": "#e4cddc"},
+    {"name": "Secondary Purple Light", "rgb": (158, 140, 189), "hex": "#9e8cbd"},
+    {"name": "Secondary Off-white",    "rgb": (248, 245, 247), "hex": "#f8f5f7"},
+    {"name": "Secondary Dark",         "rgb": (50,  50,  50),  "hex": "#323232"},
 ]
-
-# Reel safe zone constants (1080x1920 spec)
-REEL_WIDTH  = 1080
-REEL_HEIGHT = 1920
-NOGO_TOP_PX = 220   # top no-go zone in pixels
-NOGO_BOT_PX = 450   # bottom no-go zone in pixels
-SIDE_MARGIN = 35    # left/right margin in pixels
 
 
 def color_distance(px, brand_rgb):
-    """Euclidean distance in RGB space."""
     return float(np.sqrt(sum((int(a) - int(b)) ** 2 for a, b in zip(px, brand_rgb))))
 
 
@@ -80,17 +128,13 @@ def color_distance(px, brand_rgb):
 # 🔍 FEATURE 1 — Color Palette Detection
 # ─────────────────────────────────────────────
 def detect_brand_colors(img: Image.Image, threshold: int = 80) -> dict:
-    """
-    Sample pixels from the image and check how many match brand palette.
-    Returns dict with match_pct, found_colors list, and verdict.
-    """
-    img_rgb = img.convert("RGB").resize((200, 200))  # downsample for speed
-    pixels = np.array(img_rgb).reshape(-1, 3)
+    img_rgb = img.convert("RGB").resize((200, 200))
+    pixels  = np.array(img_rgb).reshape(-1, 3)
 
     brand_hits   = 0
     found_colors = set()
 
-    for px in pixels[::4]:  # sample every 4th pixel
+    for px in pixels[::4]:
         min_dist  = float("inf")
         min_color = None
         for bc in BRAND_COLORS:
@@ -127,13 +171,9 @@ def detect_brand_colors(img: Image.Image, threshold: int = 80) -> dict:
 # 🔍 FEATURE 2 — Basic Logo Detection
 # ─────────────────────────────────────────────
 def detect_logo(img: Image.Image, threshold: int = 60) -> dict:
-    """
-    Look for a brand-color cluster in each corner (typical logo placement).
-    Returns verdict and details.
-    """
     img_rgb  = img.convert("RGB")
     w, h     = img_rgb.size
-    corner_s = max(40, min(w, h) // 5)  # 20% of shorter dimension
+    corner_s = max(40, min(w, h) // 5)
 
     corners = {
         "Top-left":     img_rgb.crop((0,          0,          corner_s,   corner_s)),
@@ -161,83 +201,9 @@ def detect_logo(img: Image.Image, threshold: int = 60) -> dict:
             "verdict": "ok",
             "label":   f"✅ Logo likely detected ({best_region} corner, {round(best_score*100)}% brand pixels)",
         }
-    else:
-        return {
-            "verdict": "warn",
-            "label":   "⚠️ Logo not detected — check logo placement in a corner",
-        }
-
-
-# ─────────────────────────────────────────────
-# 🔍 FEATURE 3 — OCR Text Detection + Safe Zone Check
-# ─────────────────────────────────────────────
-def detect_text_zones(img: Image.Image) -> dict:
-    """
-    Run Tesseract OCR with bounding boxes, then classify each word block
-    as inside the safe zone or in a no-go zone (scaled to Reel 1080x1920 spec).
-    """
-    img_rgb = img.convert("RGB")
-    orig_w, orig_h = img_rgb.size
-
-    # Scale factors to map image pixels → 1080x1920 reel space
-    scale_x = REEL_WIDTH  / orig_w
-    scale_y = REEL_HEIGHT / orig_h
-
-    try:
-        ocr_data = pytesseract.image_to_data(img_rgb, output_type=pytesseract.Output.DICT)
-    except Exception:
-        return {
-            "verdict": "warn",
-            "label":   "⚠️ OCR engine unavailable — install pytesseract & Tesseract",
-            "text_found": False,
-            "unsafe_words": [],
-            "safe_words":   [],
-        }
-
-    unsafe_words = []
-    safe_words   = []
-
-    for i, word in enumerate(ocr_data["text"]):
-        word = word.strip()
-        if not word or int(ocr_data["conf"][i]) < 30:
-            continue
-
-        # Bounding box in original image pixels
-        x  = int(ocr_data["left"][i])
-        y  = int(ocr_data["top"][i])
-        bh = int(ocr_data["height"][i])
-
-        # Convert to reel-space pixels
-        reel_y_top = y        * scale_y
-        reel_y_bot = (y + bh) * scale_y
-
-        in_top_nogo = reel_y_top < NOGO_TOP_PX
-        in_bot_nogo = reel_y_bot > (REEL_HEIGHT - NOGO_BOT_PX)
-
-        if in_top_nogo or in_bot_nogo:
-            zone = "top no-go (220px)" if in_top_nogo else "bottom no-go (450px)"
-            unsafe_words.append(f'"{word}" — {zone}')
-        else:
-            safe_words.append(word)
-
-    text_found = bool(unsafe_words or safe_words)
-
-    if unsafe_words:
-        verdict = "warn"
-        label   = f"⚠️ Text detected in unsafe zone — {len(unsafe_words)} word(s) at risk of cropping"
-    elif safe_words:
-        verdict = "ok"
-        label   = f"✅ Text detected in safe zone ({len(safe_words)} word(s) — no cropping risk)"
-    else:
-        verdict = "warn"
-        label   = "⚠️ No text detected — ensure captions/text are visible"
-
     return {
-        "verdict":      verdict,
-        "label":        label,
-        "text_found":   text_found,
-        "unsafe_words": unsafe_words,
-        "safe_words":   safe_words,
+        "verdict": "warn",
+        "label":   "⚠️ Logo not detected — check logo placement in a corner",
     }
 
 
@@ -246,7 +212,7 @@ def detect_text_zones(img: Image.Image) -> dict:
 # ─────────────────────────────────────────────
 scope = [
     "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive"
+    "https://www.googleapis.com/auth/drive",
 ]
 creds  = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scope)
 client = gspread.authorize(creds)
@@ -282,14 +248,10 @@ project = st.text_input("Project you are working on")
 uploaded_file = st.file_uploader("Upload Content", type=["png", "jpg", "jpeg"])
 
 # ─────────────────────────────────────────────
-# 🔬 AUTO ANALYSIS when image is uploaded
+# 🔬 AUTO ANALYSIS
 # ─────────────────────────────────────────────
-color_result = None
-logo_result  = None
-text_result  = None
-color_ok     = False
-logo_ok      = False
-text_ok      = False
+color_ok = False
+logo_ok  = False
 
 if uploaded_file:
     img_bytes = uploaded_file.read()
@@ -297,15 +259,13 @@ if uploaded_file:
     st.image(img, caption="Preview", use_column_width=True)
 
     st.subheader("🔬 Automated Analysis")
-    col_a, col_b, col_c = st.columns(3)
+    col_a, col_b = st.columns(2)
 
-    # — Color palette —
     with col_a:
         with st.spinner("Detecting brand colors…"):
             color_result = detect_brand_colors(img)
         css_cls = "result-ok" if color_result["verdict"] == "ok" else "result-warn"
         st.markdown(f'<div class="result-box {css_cls}">{color_result["label"]}</div>', unsafe_allow_html=True)
-
         if color_result["found_colors"]:
             swatches = "".join(
                 f'<span class="swatch" style="background:{c};" title="{c}"></span>'
@@ -314,26 +274,12 @@ if uploaded_file:
             st.markdown(f'<div class="swatch-row">{swatches}</div>', unsafe_allow_html=True)
         color_ok = color_result["verdict"] == "ok"
 
-    # — Logo detection —
     with col_b:
         with st.spinner("Scanning for logo…"):
             logo_result = detect_logo(img)
         css_cls = "result-ok" if logo_result["verdict"] == "ok" else "result-warn"
         st.markdown(f'<div class="result-box {css_cls}">{logo_result["label"]}</div>', unsafe_allow_html=True)
         logo_ok = logo_result["verdict"] == "ok"
-
-    # — OCR + safe zone —
-    with col_c:
-        with st.spinner("Running OCR text detection…"):
-            text_result = detect_text_zones(img)
-        css_cls = "result-ok" if text_result["verdict"] == "ok" else "result-warn"
-        st.markdown(f'<div class="result-box {css_cls}">{text_result["label"]}</div>', unsafe_allow_html=True)
-
-        if text_result.get("unsafe_words"):
-            with st.expander("⚠️ Unsafe zone words"):
-                for w in text_result["unsafe_words"]:
-                    st.write(f"• {w}")
-        text_ok = text_result["verdict"] == "ok"
 
     st.divider()
 
@@ -359,15 +305,15 @@ st.subheader("Checklist")
 
 col1, col2 = st.columns(2)
 with col1:
-    color_check    = st.checkbox("Brand colors used",    value=color_ok)
+    color_check    = st.checkbox("Brand colors used",  value=color_ok)
     contrast_check = st.checkbox("Good contrast")
     title_font     = st.checkbox("Futura used")
     body_font      = st.checkbox("Avenir used")
-    logo_place     = st.checkbox("Logo correct",         value=logo_ok)
+    logo_place     = st.checkbox("Logo correct",       value=logo_ok)
 
 with col2:
-    safe_zone = st.checkbox("Safe zone followed",        value=text_ok)
-    graphics  = st.checkbox("Approved graphics")
+    safe_zone  = st.checkbox("Safe zone followed")
+    graphics   = st.checkbox("Approved graphics")
     tone_check = st.checkbox("Tone correct")
 
 confirm = st.checkbox("I confirm all guidelines are followed")
