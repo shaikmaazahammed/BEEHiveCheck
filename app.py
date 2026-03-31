@@ -7,10 +7,14 @@ from datetime import datetime
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🖤 UI
+# 🐝 UI + Bee Cursor
 st.markdown("""
 <style>
-.stApp { background-color: #0e0e0e; color: white; }
+.stApp {
+    background-color: #0e0e0e;
+    color: white;
+    cursor: url("https://cdn-icons-png.flaticon.com/128/616/616490.png"), auto;
+}
 
 div.stButton > button {
     background-color: #fad51b;
@@ -23,9 +27,16 @@ div.stButton > button {
     background-color: #1a1a1a;
     color: white;
 }
+
+section[data-testid="stFileUploader"] {
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    padding: 10px;
+}
 </style>
 """, unsafe_allow_html=True)
 
+# 🐝 Title
 st.title("🐝 BEEHiveCheck")
 st.markdown("Content Quality Control System")
 
@@ -42,10 +53,11 @@ creds = Credentials.from_service_account_info(
 client = gspread.authorize(creds)
 sheet = client.open("BEEHiveCheck Data").sheet1
 
+# 📊 LOAD DATA
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
-# 📊 SIDEBAR ANALYTICS
+# 📊 SIDEBAR ANALYTICS (SAFE)
 st.sidebar.title("📊 Analytics")
 
 if not df.empty and "Score" in df.columns:
@@ -71,12 +83,17 @@ st.divider()
 name = st.text_input("Your Name")
 project = st.text_input("Project you are working on")
 
-uploaded_file = st.file_uploader("Upload Content", type=["png","jpg","jpeg","mp4"])
+# 📤 Upload
+uploaded_file = st.file_uploader(
+    "Upload Content",
+    type=["png","jpg","jpeg","mp4"]
+)
 
 # 🖼️ Preview
 if uploaded_file:
     st.image(uploaded_file, caption="Preview", use_column_width=True)
 
+# ✍️ Caption
 caption = st.text_area("Caption")
 
 # 🧠 Grammar Check
@@ -148,7 +165,7 @@ if st.button("Submit for Review"):
             result = "Not Approved ❌"
             st.error(f"Not approved ({score}/{total})")
 
-        # SAVE
+        # 💾 SAVE TO GOOGLE SHEETS
         sheet.append_row([
             name,
             project,
