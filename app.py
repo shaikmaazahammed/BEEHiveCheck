@@ -7,13 +7,61 @@ from datetime import datetime
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🎨 UI STYLING
+# 🎨 UI + FONT + LOGO GLOW
 st.markdown("""
+<link href="https://fonts.googleapis.com/css2?family=Sreda&display=swap" rel="stylesheet">
+
 <style>
+
+/* BASE */
 .stApp {
     background-color: #0e0e0e;
     color: white;
     font-family: 'Segoe UI', sans-serif;
+}
+
+/* LOGO TOP LEFT */
+.logo-container {
+    position: fixed;
+    top: 20px;
+    left: 30px;
+    z-index: 999;
+}
+
+.logo-container img {
+    width: 75px;
+    filter: drop-shadow(0px 0px 8px #fad51b); /* 🔥 glow */
+    transition: 0.3s;
+}
+
+.logo-container img:hover {
+    filter: drop-shadow(0px 0px 18px #fad51b);
+    transform: scale(1.05);
+}
+
+/* TITLE */
+.title {
+    font-family: 'Sreda', serif;   /* 🔥 SREDA FONT */
+    font-size: 44px;
+    text-align: center;
+    margin-top: 60px;
+    color: white;
+    text-shadow: 0 0 12px rgba(250,213,27,0.4);
+}
+
+/* SUBTITLE */
+.subtitle {
+    text-align: center;
+    color: #aaa;
+    font-size: 15px;
+    margin-top: -12px;  /* tight spacing */
+}
+
+/* DIVIDER */
+.divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #fad51b, transparent);
+    margin-top: 10px;
 }
 
 /* BUTTON */
@@ -47,49 +95,21 @@ div.stButton > button:hover {
     padding-top:20px;
     border-top:1px solid #333;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
-# 🐝 HEADER (FINAL PERFECT COMPACT)
+# 🐝 LOGO (TOP LEFT CORNER)
+st.markdown("""
+<div class="logo-container">
+    <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/assets/logo.png">
+</div>
+""", unsafe_allow_html=True)
 
-col1, col2, col3 = st.columns([3,4,3])
-
-with col2:
-    c1, c2 = st.columns([2,5])
-
-    with c1:
-        st.image("assets/logo.png", width=115)  # 🔥 final size
-
-    with c2:
-        st.markdown("""
-        <div style="
-            font-size:42px;
-            color:white;
-            text-shadow: 0 0 12px rgba(250,213,27,0.3);
-            margin-bottom:-20px;
-        ">
-            BEEHiveCheck
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div style="
-        text-align:center;
-        color:#aaa;
-        font-size:15px;
-        margin-top:-10px;
-    ">
-        Content Quality Control System
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div style="
-        height:1px;
-        background: linear-gradient(90deg, transparent, #fad51b, transparent);
-        margin-top:10px;
-    "></div>
-    """, unsafe_allow_html=True)
+# 🧠 HEADER TEXT (CENTERED)
+st.markdown('<div class="title">BEEHiveCheck</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Content Quality Control System</div>', unsafe_allow_html=True)
+st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
 st.divider()
 
@@ -222,7 +242,6 @@ if st.button("Submit for Review"):
         st.success("Saved to dashboard 📊")
 
 # 🐝 FOOTER
-
 st.markdown("""
 <div class="footer">
     📩 Contact email: bueb.mentorship@gmail.com <br>
