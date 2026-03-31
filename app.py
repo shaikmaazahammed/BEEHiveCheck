@@ -45,20 +45,12 @@ sheet = client.open("BEEHiveCheck Data").sheet1
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
-# 📊 SIDEBAR ANALYTICS (SAFE VERSION)
+# 📊 SIDEBAR ANALYTICS
 st.sidebar.title("📊 Analytics")
 
 if not df.empty and "Score" in df.columns:
 
     st.sidebar.metric("Total Submissions", len(df))
-
-    approved = df[df["Result"] == "Approved ✅"]
-    st.sidebar.metric("Approved", len(approved))
-
-    st.sidebar.metric(
-        "Approval Rate",
-        f"{(len(approved)/len(df))*100:.1f}%"
-    )
 
     scores = pd.to_numeric(
         df["Score"].astype(str).str.split("/").str[0],
@@ -146,44 +138,24 @@ if st.button("Submit for Review"):
         score = sum(checks)
         total = len(checks)
 
-        status = "Pending ⏳"
-
         if score == total:
+            result = "Perfect ✅"
             st.success(f"Perfect ({score}/{total}) 🚀")
         elif score >= total * 0.7:
-            st.warning(f"Needs Fix ({score}/{total})")
+            result = "Needs Fix ⚠️"
+            st.warning(f"Needs improvement ({score}/{total})")
         else:
-            st.error(f"Not Approved ({score}/{total})")
+            result = "Not Approved ❌"
+            st.error(f"Not approved ({score}/{total})")
 
-        # SAVE TO SHEET
+        # SAVE
         sheet.append_row([
             name,
             project,
             f"{score}/{total}",
-            status,
+            result,
             "Yes",
             datetime.now().strftime("%Y-%m-%d %H:%M")
         ])
 
-        st.success("Submitted for approval 🐝")
-
-st.divider()
-
-# 👨‍💼 ADMIN PANEL
-st.subheader("👨‍💼 Admin Approval Panel")
-
-if not df.empty:
-
-    selected_index = st.selectbox("Select Submission", df.index)
-
-    selected_row = df.iloc[selected_index]
-
-    st.write(selected_row)
-
-    if st.button("Approve ✅"):
-        sheet.update_cell(selected_index+2, 4, "Approved ✅")
-        st.success("Approved")
-
-    if st.button("Reject ❌"):
-        sheet.update_cell(selected_index+2, 4, "Rejected ❌")
-        st.error("Rejected")
+        st.success("Saved to dashboard 📊")
