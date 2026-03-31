@@ -18,13 +18,6 @@ st.markdown("""
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* HEADER ALIGNMENT */
-.header-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 /* TITLE */
 .title {
     font-size: 42px;
@@ -73,15 +66,15 @@ div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
-# 🐝 HEADER (FINAL FIXED)
+# 🐝 HEADER (FINAL PERFECT ALIGNMENT)
 
 col1, col2, col3 = st.columns([3,4,3])
 
 with col2:
-    c1, c2 = st.columns([1,4])
+    c1, c2 = st.columns([1.5, 4])
 
     with c1:
-        st.image("assets/logo.png", width=60)
+        st.image("assets/logo.png", width=90)  # 🔥 increased size
 
     with c2:
         st.markdown("<div class='title'>BEEHiveCheck</div>", unsafe_allow_html=True)
