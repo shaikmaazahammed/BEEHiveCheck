@@ -7,13 +7,17 @@ from datetime import datetime
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🐝 UI + FIXED CURSOR
+# 🖤 UI (SAFE + OPTIONAL CURSOR)
 st.markdown("""
 <style>
 .stApp {
     background-color: #0e0e0e;
     color: white;
-    cursor: url("https://cdn-icons-png.flaticon.com/32/616/616490.png") 16 16, auto;
+}
+
+/* OPTIONAL bee cursor (comment this if it acts weird) */
+* {
+    cursor: url("https://cur.cursors-4u.net/nature/nat-10/nat946.cur"), auto;
 }
 
 div.stButton > button {
