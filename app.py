@@ -7,6 +7,14 @@ from datetime import datetime
 import numpy as np
 from PIL import Image
 import io
+import base64
+
+def get_logo_b64(path: str = "assets/logo.png") -> str:
+    try:
+        with open(path, "rb") as f:
+            return base64.b64encode(f.read()).decode()
+    except FileNotFoundError:
+        return ""
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
@@ -90,14 +98,17 @@ div.stButton > button:hover {
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-# 🐝 HEADER — centered via HTML, not nested columns
+# 🐝 HEADER — logo embedded as base64 (no path issues)
 # ─────────────────────────────────────────────
+logo_b64 = get_logo_b64()
+logo_img_tag = f'<img src="data:image/png;base64,{logo_b64}" />' if logo_b64 else ""
+
 _, center_col, _ = st.columns([1, 4, 1])
 with center_col:
-    st.markdown("""
+    st.markdown(f"""
     <div class="bee-header">
         <div class="bee-header-row">
-            <img src="app/static/logo.png" />
+            {logo_img_tag}
             <span class="header-title">BEEHiveCheck</span>
         </div>
         <div class="subtitle">Content Quality Control System</div>
