@@ -7,50 +7,39 @@ from datetime import datetime
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🎨 UI + HERO HEADER
+# 🎨 UI
 st.markdown("""
 <style>
-
-/* 🌑 BASE */
 .stApp {
     background-color: #0e0e0e;
     color: white;
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* 🐝 HERO */
-.hero-container {
-    width: 100%;
-    background: linear-gradient(135deg, #111111, #1a1a1a);
-    padding: 40px 0;
+/* HERO BOX */
+.hero {
     text-align: center;
-    border-bottom: 1px solid #222;
-}
-
-/* LOGO */
-.hero-container img {
-    width: 140px;
-    margin-bottom: 15px;
+    padding: 30px 0;
 }
 
 /* TITLE */
-.hero-container h1 {
+.hero h1 {
     font-size: 42px;
     margin-bottom: 5px;
     text-shadow: 0 0 15px rgba(250, 213, 27, 0.35);
 }
 
 /* SUBTITLE */
-.hero-container p {
+.hero p {
     color: #aaa;
     font-size: 16px;
 }
 
 /* DIVIDER */
-.hero-divider {
+.divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, #fad51b, transparent);
-    margin-top: 25px;
+    margin-top: 20px;
 }
 
 /* BUTTON */
@@ -61,45 +50,42 @@ div.stButton > button {
     font-weight: 600;
     padding: 10px 20px;
     border: none;
-    transition: all 0.3s ease;
+    transition: 0.3s;
 }
 div.stButton > button:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow: 0px 8px 20px rgba(250, 213, 27, 0.4);
 }
 
-/* INPUTS */
+/* INPUT */
 .stTextInput input, .stTextArea textarea {
     background-color: #1a1a1a;
     color: white;
-    border-radius: 8px;
     border: 1px solid #333;
+    border-radius: 8px;
 }
 
 /* UPLOAD */
 section[data-testid="stFileUploader"] {
     background-color: #1a1a1a;
-    border-radius: 12px;
-    padding: 12px;
-    border: 1px dashed #333;
+    border-radius: 10px;
+    padding: 10px;
 }
-
-/* SIDEBAR */
-section[data-testid="stSidebar"] {
-    background-color: #111111;
-}
-
 </style>
-
-<div class="hero-container">
-    <img src="https://raw.githubusercontent.com/shaikmaazahammed/bee-content-review-system/main/assets/logo.png">
-    <h1>BEEHiveCheck</h1>
-    <p>Content Quality Control System</p>
-    <div class="hero-divider"></div>
-</div>
 """, unsafe_allow_html=True)
 
-st.divider()
+# 🐝 HERO (FINAL FIXED)
+st.markdown('<div class="hero">', unsafe_allow_html=True)
+
+col1, col2, col3 = st.columns([2,3,2])
+
+with col2:
+    st.image("assets/logo.png", width=180)
+    st.markdown("<h1 style='text-align:center;'>BEEHiveCheck</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center;'>Content Quality Control System</p>", unsafe_allow_html=True)
+
+st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 # 🔐 GOOGLE SHEETS
 scope = [
@@ -114,11 +100,11 @@ creds = Credentials.from_service_account_info(
 client = gspread.authorize(creds)
 sheet = client.open("BEEHiveCheck Data").sheet1
 
-# 📊 LOAD DATA
+# 📊 DATA
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
-# 📊 SIDEBAR ANALYTICS
+# 📊 SIDEBAR
 st.sidebar.title("📊 Analytics")
 
 if not df.empty and "Score" in df.columns:
@@ -143,19 +129,15 @@ st.divider()
 name = st.text_input("Your Name")
 project = st.text_input("Project you are working on")
 
-uploaded_file = st.file_uploader(
-    "Upload Content",
-    type=["png","jpg","jpeg","mp4"]
-)
+uploaded_file = st.file_uploader("Upload Content", type=["png","jpg","jpeg","mp4"])
 
 if uploaded_file:
     st.image(uploaded_file, caption="Preview", use_column_width=True)
 
 caption = st.text_area("Caption")
 
-# 🧠 GRAMMAR CHECK
+# 🧠 GRAMMAR
 grammar_ok = True
-
 if caption:
     blob = TextBlob(caption)
     corrected = blob.correct()
