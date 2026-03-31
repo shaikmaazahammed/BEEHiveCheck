@@ -1,8 +1,7 @@
 streamlit
+textblob
 pandas
 gspread
 google-auth
-textblob
-opencv-python-headless
 numpy
-pillow
+Pillow
