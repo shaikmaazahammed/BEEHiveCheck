@@ -7,7 +7,7 @@ from datetime import datetime
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🖤 UI + OPTIONAL CURSOR
+# 🖤 UI (CLEAN + OPTIONAL CURSOR)
 st.markdown("""
 <style>
 .stApp {
@@ -15,10 +15,10 @@ st.markdown("""
     color: white;
 }
 
-/* 🐝 Uncomment if cursor works */
+/* 🐝 OPTIONAL BEE CURSOR (enable if it works) */
 /*
 * {
-    cursor: url("assets/bee.png") 16 16, auto;
+    cursor: url("https://raw.githubusercontent.com/shaikmaazahammed/bee-content-review-system/main/assets/bee.png") 16 16, auto;
 }
 */
 
