@@ -7,32 +7,45 @@ from datetime import datetime
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🎨 UI
+# 🎨 UI + HEADER
 st.markdown("""
 <style>
+
+/* BASE */
 .stApp {
     background-color: #0e0e0e;
     color: white;
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* HERO BOX */
-.hero {
-    text-align: center;
-    padding: 30px 0;
+/* HEADER */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 30px 0 10px 0;
+}
+
+/* LOGO */
+.header img {
+    width: 60px;
 }
 
 /* TITLE */
-.hero h1 {
+.header h1 {
     font-size: 42px;
-    margin-bottom: 5px;
-    text-shadow: 0 0 15px rgba(250, 213, 27, 0.35);
+    margin: 0;
+    color: white;
+    text-shadow: 0 0 12px rgba(250, 213, 27, 0.3);
 }
 
 /* SUBTITLE */
-.hero p {
+.subtitle {
+    text-align: center;
     color: #aaa;
     font-size: 16px;
+    margin-top: 5px;
 }
 
 /* DIVIDER */
@@ -71,21 +84,23 @@ section[data-testid="stFileUploader"] {
     border-radius: 10px;
     padding: 10px;
 }
+
 </style>
+
+<div class="header">
+    <img src="https://raw.githubusercontent.com/shaikmaazahammed/bee-content-review-system/main/assets/logo.png">
+    <h1>BEEHiveCheck</h1>
+</div>
+
+<div class="subtitle">
+    Content Quality Control System
+</div>
+
+<div class="divider"></div>
+
 """, unsafe_allow_html=True)
 
-# 🐝 HERO (FINAL FIXED)
-st.markdown('<div class="hero">', unsafe_allow_html=True)
-
-col1, col2, col3 = st.columns([2,3,2])
-
-with col2:
-    st.image("assets/logo.png", width=180)
-    st.markdown("<h1 style='text-align:center;'>BEEHiveCheck</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center;'>Content Quality Control System</p>", unsafe_allow_html=True)
-
-st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
+st.divider()
 
 # 🔐 GOOGLE SHEETS
 scope = [
@@ -129,7 +144,10 @@ st.divider()
 name = st.text_input("Your Name")
 project = st.text_input("Project you are working on")
 
-uploaded_file = st.file_uploader("Upload Content", type=["png","jpg","jpeg","mp4"])
+uploaded_file = st.file_uploader(
+    "Upload Content",
+    type=["png","jpg","jpeg","mp4"]
+)
 
 if uploaded_file:
     st.image(uploaded_file, caption="Preview", use_column_width=True)
@@ -138,6 +156,7 @@ caption = st.text_area("Caption")
 
 # 🧠 GRAMMAR
 grammar_ok = True
+
 if caption:
     blob = TextBlob(caption)
     corrected = blob.correct()
