@@ -20,7 +20,11 @@ st.markdown("""
 
 /* LOGO GLOW */
 img {
-    filter: drop-shadow(0px 0px 6px rgba(250,213,27,0.4));
+    filter: drop-shadow(0px 0px 10px rgba(250,213,27,0.6));
+    transition: 0.3s;
+}
+img:hover {
+    filter: drop-shadow(0px 0px 20px rgba(250,213,27,0.9));
 }
 
 /* TITLE */
@@ -28,7 +32,7 @@ img {
     font-family: 'Sreda', serif;
     font-size: 44px;
     text-align: center;
-    margin-top: -20px;
+    margin-top: -30px;
     color: white;
     text-shadow: 0 0 12px rgba(250,213,27,0.4);
 }
@@ -82,13 +86,15 @@ div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
-# 🐝 LOGO (TOP LEFT - WORKING)
-logo_col1, logo_col2 = st.columns([1, 9])
+# 🐝 LOGO (TOP LEFT - BIG FINAL SIZE)
+
+logo_col1, logo_col2 = st.columns([1.5, 8.5])
 
 with logo_col1:
-    st.image("assets/logo.png", width=80)
+    st.image("assets/logo.png", width=130)  # 🔥 FINAL SIZE
 
 # 🧠 HEADER
+
 st.markdown('<div class="title">BEEHiveCheck</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Content Quality Control System</div>', unsafe_allow_html=True)
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
@@ -96,6 +102,7 @@ st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 st.divider()
 
 # 🔐 GOOGLE SHEETS
+
 scope = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
@@ -109,10 +116,12 @@ client = gspread.authorize(creds)
 sheet = client.open("BEEHiveCheck Data").sheet1
 
 # 📊 DATA
+
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
 # 📊 SIDEBAR
+
 st.sidebar.title("📊 Analytics")
 
 if not df.empty and "Score" in df.columns:
@@ -134,6 +143,7 @@ else:
 st.divider()
 
 # 👤 INPUTS
+
 name = st.text_input("Your Name")
 project = st.text_input("Project you are working on")
 
@@ -145,6 +155,7 @@ if uploaded_file:
 caption = st.text_area("Caption")
 
 # 🧠 GRAMMAR CHECK
+
 grammar_ok = True
 
 if caption:
@@ -160,6 +171,7 @@ if caption:
 st.divider()
 
 # ✅ CHECKLIST
+
 st.subheader("Checklist")
 
 col1, col2 = st.columns(2)
@@ -181,6 +193,7 @@ confirm = st.checkbox("I confirm all guidelines are followed")
 st.divider()
 
 # 🚀 SUBMIT
+
 if st.button("Submit for Review"):
 
     if not name or not project or not uploaded_file or not caption:
@@ -224,6 +237,7 @@ if st.button("Submit for Review"):
         st.success("Saved to dashboard 📊")
 
 # 🐝 FOOTER
+
 st.markdown("""
 <div class="footer">
     📩 Contact email: bueb.mentorship@gmail.com <br>
