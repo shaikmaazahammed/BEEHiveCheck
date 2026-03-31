@@ -18,29 +18,6 @@ st.markdown("""
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* TITLE */
-.title {
-    font-size: 42px;
-    margin-left: 15px;
-    color: white;
-    text-shadow: 0 0 12px rgba(250, 213, 27, 0.3);
-}
-
-/* SUBTITLE */
-.subtitle {
-    text-align: center;
-    color: #aaa;
-    font-size: 16px;
-    margin-top: 5px;
-}
-
-/* DIVIDER */
-.divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #fad51b, transparent);
-    margin-top: 20px;
-}
-
 /* BUTTON */
 div.stButton > button {
     background: linear-gradient(135deg, #fad51b, #f5c400);
@@ -63,24 +40,59 @@ div.stButton > button:hover {
     border-radius: 8px;
 }
 
+/* FOOTER */
+.footer {
+    text-align:center;
+    color:#888;
+    font-size:14px;
+    margin-top:40px;
+    padding-top:20px;
+    border-top:1px solid #333;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
-# 🐝 HEADER (FINAL PERFECT ALIGNMENT)
+# 🐝 HEADER (FINAL PERFECT)
 
 col1, col2, col3 = st.columns([3,4,3])
 
 with col2:
-    c1, c2 = st.columns([1.5, 4])
+    c1, c2 = st.columns([2, 5])
 
     with c1:
-        st.image("assets/logo.png", width=90)  # 🔥 increased size
+        st.image("assets/logo.png", width=110)
 
     with c2:
-        st.markdown("<div class='title'>BEEHiveCheck</div>", unsafe_allow_html=True)
+        st.markdown("""
+        <div style="
+            font-size:42px;
+            color:white;
+            text-shadow: 0 0 12px rgba(250,213,27,0.3);
+            margin-bottom: -10px;
+        ">
+            BEEHiveCheck
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown("<div class='subtitle'>Content Quality Control System</div>", unsafe_allow_html=True)
-    st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="
+        text-align:center;
+        color:#aaa;
+        font-size:15px;
+        margin-top:0px;
+    ">
+        Content Quality Control System
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="
+        height:1px;
+        background: linear-gradient(90deg, transparent, #fad51b, transparent);
+        margin-top:15px;
+    "></div>
+    """, unsafe_allow_html=True)
 
 st.divider()
 
@@ -133,7 +145,7 @@ if uploaded_file:
 
 caption = st.text_area("Caption")
 
-# 🧠 GRAMMAR
+# 🧠 GRAMMAR CHECK
 grammar_ok = True
 
 if caption:
@@ -211,3 +223,12 @@ if st.button("Submit for Review"):
         ])
 
         st.success("Saved to dashboard 📊")
+
+# 🐝 FOOTER (FINAL ADDITION)
+
+st.markdown("""
+<div class="footer">
+    📩 Contact email: bueb.mentorship@gmail.com <br>
+    📸 Instagram: @bee.mentorship.program
+</div>
+""", unsafe_allow_html=True)
