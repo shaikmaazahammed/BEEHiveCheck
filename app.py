@@ -7,44 +7,28 @@ from datetime import datetime
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🎨 UI + FONT + LOGO GLOW
+# 🎨 UI + FONT
 st.markdown("""
 <link href="https://fonts.googleapis.com/css2?family=Sreda&display=swap" rel="stylesheet">
 
 <style>
-
-/* BASE */
 .stApp {
     background-color: #0e0e0e;
     color: white;
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* LOGO TOP LEFT */
-.logo-container {
-    position: fixed;
-    top: 20px;
-    left: 30px;
-    z-index: 999;
-}
-
-.logo-container img {
-    width: 75px;
-    filter: drop-shadow(0px 0px 8px #fad51b); /* 🔥 glow */
-    transition: 0.3s;
-}
-
-.logo-container img:hover {
-    filter: drop-shadow(0px 0px 18px #fad51b);
-    transform: scale(1.05);
+/* LOGO GLOW */
+img {
+    filter: drop-shadow(0px 0px 6px rgba(250,213,27,0.4));
 }
 
 /* TITLE */
 .title {
-    font-family: 'Sreda', serif;   /* 🔥 SREDA FONT */
+    font-family: 'Sreda', serif;
     font-size: 44px;
     text-align: center;
-    margin-top: 60px;
+    margin-top: -20px;
     color: white;
     text-shadow: 0 0 12px rgba(250,213,27,0.4);
 }
@@ -54,7 +38,7 @@ st.markdown("""
     text-align: center;
     color: #aaa;
     font-size: 15px;
-    margin-top: -12px;  /* tight spacing */
+    margin-top: -12px;
 }
 
 /* DIVIDER */
@@ -95,18 +79,16 @@ div.stButton > button:hover {
     padding-top:20px;
     border-top:1px solid #333;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
-# 🐝 LOGO (TOP LEFT CORNER)
-st.markdown("""
-<div class="logo-container">
-    <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/assets/logo.png">
-</div>
-""", unsafe_allow_html=True)
+# 🐝 LOGO (TOP LEFT - WORKING)
+logo_col1, logo_col2 = st.columns([1, 9])
 
-# 🧠 HEADER TEXT (CENTERED)
+with logo_col1:
+    st.image("assets/logo.png", width=80)
+
+# 🧠 HEADER
 st.markdown('<div class="title">BEEHiveCheck</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Content Quality Control System</div>', unsafe_allow_html=True)
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
