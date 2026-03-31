@@ -1,62 +1,74 @@
 import streamlit as st
-import language_tool_python
 from textblob import TextBlob
 
-st.set_page_config(page_title="Bee Content Review", layout="wide")
+st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🖤 Minimal UI
+# 🖤 Minimal Black UI
 st.markdown("""
 <style>
 .stApp { background-color: #0e0e0e; color: white; }
-h1, h2, h3 { color: white; }
+
+h1, h2, h3 {
+    color: white;
+}
+
 div.stButton > button {
     background-color: #fad51b;
     color: black;
     border-radius: 8px;
     font-weight: bold;
 }
+
 .stTextArea textarea {
     background-color: #1a1a1a;
     color: white;
 }
+
+section[data-testid="stFileUploader"] {
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    padding: 10px;
+}
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🐝 Bee Content Review")
-st.markdown("Smart content validation system")
+# 🐝 Title
+st.title("🐝 BEEHiveCheck")
+st.markdown("Content Quality Control for Your Hive")
 
 st.divider()
 
-# Upload
-uploaded_file = st.file_uploader("Upload Content", type=["png","jpg","jpeg","mp4"])
-caption = st.text_area("Caption")
+# 📤 Upload
+uploaded_file = st.file_uploader(
+    "Upload Content",
+    type=["png", "jpg", "jpeg", "mp4"]
+)
 
-tool = language_tool_python.LanguageTool('en-US')
+# ✍️ Caption
+caption = st.text_area("Caption")
 
 grammar_ok = True
 tone_label = "Unknown"
 
+# 🧠 Language Analysis
 if caption:
     st.subheader("🧠 Language Analysis")
 
-    matches = tool.check(caption)
+    blob = TextBlob(caption)
 
-    if len(matches) == 0:
-        st.success("✅ No grammar issues")
+    # ✍️ Grammar / spelling suggestion
+    corrected = blob.correct()
+
+    if caption == str(corrected):
+        st.success("✅ Caption looks clean")
         grammar_ok = True
     else:
+        st.warning("⚠️ Suggested improvement:")
+
+        st.text_area("Improved Caption", str(corrected), height=100)
         grammar_ok = False
-        st.warning(f"⚠️ {len(matches)} issue(s) found")
 
-        for match in matches[:3]:
-            st.write(f"• {match.message}")
-
-    corrected = tool.correct(caption)
-
-    if st.button("✨ Auto Fix Caption"):
-        st.text_area("Improved Caption", corrected)
-
-    blob = TextBlob(caption)
+    # 🎭 Tone Detection
     polarity = blob.sentiment.polarity
 
     if polarity > 0.3:
@@ -70,7 +82,7 @@ if caption:
 
 st.divider()
 
-# Checklist
+# ✅ Checklist
 st.subheader("Checklist")
 
 col1, col2 = st.columns(2)
@@ -96,14 +108,16 @@ with col2:
     st.markdown("**Graphics**")
     graphics = st.checkbox("Approved graphics")
 
-    st.markdown("**Tone Match**")
+    st.markdown("**Tone Match")
     tone_check = st.checkbox("Matches brand tone")
 
 st.divider()
 
-if st.button("Submit"):
+# 🚀 Submit Logic
+if st.button("Submit for Review"):
+
     if not uploaded_file or not caption:
-        st.error("Upload content and add caption")
+        st.error("❌ Please upload content and write a caption.")
     else:
         checks = [
             color_check, contrast_check,
@@ -118,11 +132,11 @@ if st.button("Submit"):
         score = sum(checks)
         total = len(checks)
 
-        st.subheader("Result")
+        st.subheader("📊 Result")
 
         if score == total:
-            st.success(f"Perfect ({score}/{total}) 🚀")
+            st.success(f"✅ Perfect ({score}/{total}) — Ready to post 🚀")
         elif score >= total * 0.7:
-            st.warning(f"Needs improvement ({score}/{total})")
+            st.warning(f"⚠️ Good ({score}/{total}) — Minor fixes needed")
         else:
-            st.error(f"Not approved ({score}/{total})")
+            st.error(f"❌ Not approved ({score}/{total}) — Fix before posting")
