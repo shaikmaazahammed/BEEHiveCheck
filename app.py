@@ -7,11 +7,9 @@ from datetime import datetime
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🎨 UI
+# 🎨 UI STYLING
 st.markdown("""
 <style>
-
-/* BASE */
 .stApp {
     background-color: #0e0e0e;
     color: white;
@@ -49,19 +47,18 @@ div.stButton > button:hover {
     padding-top:20px;
     border-top:1px solid #333;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
-# 🐝 HEADER (FINAL PERFECT)
+# 🐝 HEADER (FINAL PERFECT COMPACT)
 
 col1, col2, col3 = st.columns([3,4,3])
 
 with col2:
-    c1, c2 = st.columns([2, 5])
+    c1, c2 = st.columns([2,5])
 
     with c1:
-        st.image("assets/logo.png", width=110)
+        st.image("assets/logo.png", width=115)  # 🔥 final size
 
     with c2:
         st.markdown("""
@@ -69,7 +66,7 @@ with col2:
             font-size:42px;
             color:white;
             text-shadow: 0 0 12px rgba(250,213,27,0.3);
-            margin-bottom: -10px;
+            margin-bottom:-20px;
         ">
             BEEHiveCheck
         </div>
@@ -80,7 +77,7 @@ with col2:
         text-align:center;
         color:#aaa;
         font-size:15px;
-        margin-top:0px;
+        margin-top:-10px;
     ">
         Content Quality Control System
     </div>
@@ -90,7 +87,7 @@ with col2:
     <div style="
         height:1px;
         background: linear-gradient(90deg, transparent, #fad51b, transparent);
-        margin-top:15px;
+        margin-top:10px;
     "></div>
     """, unsafe_allow_html=True)
 
@@ -134,7 +131,7 @@ else:
 
 st.divider()
 
-# 👤 INPUT
+# 👤 INPUTS
 name = st.text_input("Your Name")
 project = st.text_input("Project you are working on")
 
@@ -224,7 +221,7 @@ if st.button("Submit for Review"):
 
         st.success("Saved to dashboard 📊")
 
-# 🐝 FOOTER (FINAL ADDITION)
+# 🐝 FOOTER
 
 st.markdown("""
 <div class="footer">
