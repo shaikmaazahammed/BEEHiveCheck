@@ -1,2 +1,5 @@
 streamlit
 textblob
+pandas
+gspread
+google-auth
