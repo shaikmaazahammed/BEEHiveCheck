@@ -1,4 +1,8 @@
+streamlit
+pandas
+gspread
+google-auth
+textblob
 opencv-python-headless
-pillow
-pytesseract
 numpy
+pillow
