@@ -45,34 +45,43 @@ sheet = client.open("BEEHiveCheck Data").sheet1
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
-# 📊 SIDEBAR ANALYTICS
+# 📊 SIDEBAR ANALYTICS (SAFE VERSION)
 st.sidebar.title("📊 Analytics")
 
-if not df.empty:
+if not df.empty and "Score" in df.columns:
+
     st.sidebar.metric("Total Submissions", len(df))
 
     approved = df[df["Result"] == "Approved ✅"]
     st.sidebar.metric("Approved", len(approved))
 
-    st.sidebar.metric("Approval Rate", f"{(len(approved)/len(df))*100:.1f}%")
+    st.sidebar.metric(
+        "Approval Rate",
+        f"{(len(approved)/len(df))*100:.1f}%"
+    )
 
-    top_user = df["Name"].value_counts().idxmax()
-    st.sidebar.write(f"🏆 Top Contributor: {top_user}")
+    scores = pd.to_numeric(
+        df["Score"].astype(str).str.split("/").str[0],
+        errors="coerce"
+    ).fillna(0)
 
-    scores = df["Score"].str.split("/").str[0].astype(int)
     st.sidebar.bar_chart(scores)
+
+    if "Name" in df.columns:
+        top_user = df["Name"].value_counts().idxmax()
+        st.sidebar.write(f"🏆 Top Contributor: {top_user}")
 else:
-    st.sidebar.info("No data yet")
+    st.sidebar.info("No valid data yet")
 
 st.divider()
 
-# 👤 USER INPUT
+# 👤 INPUT
 name = st.text_input("Your Name")
 project = st.text_input("Project you are working on")
 
 uploaded_file = st.file_uploader("Upload Content", type=["png","jpg","jpeg","mp4"])
 
-# 🖼️ PREVIEW
+# 🖼️ Preview
 if uploaded_file:
     st.image(uploaded_file, caption="Preview", use_column_width=True)
 
@@ -91,6 +100,8 @@ if caption:
         st.warning("⚠️ Grammar issues detected")
         grammar_ok = False
 
+st.divider()
+
 # ✅ Checklist
 st.subheader("Checklist")
 
@@ -108,7 +119,7 @@ with col2:
     graphics = st.checkbox("Approved graphics")
     tone_check = st.checkbox("Tone correct")
 
-# 📌 USER CONFIRMATION
+# 📌 Confirmation
 confirm = st.checkbox("I confirm all brand guidelines are followed")
 
 st.divider()
@@ -117,9 +128,9 @@ st.divider()
 if st.button("Submit for Review"):
 
     if not name or not project or not uploaded_file or not caption:
-        st.error("Fill all fields")
+        st.error("❌ Fill all fields")
     elif not confirm:
-        st.error("Please confirm guidelines compliance")
+        st.error("❌ Please confirm guidelines")
     else:
 
         checks = [
@@ -135,17 +146,16 @@ if st.button("Submit for Review"):
         score = sum(checks)
         total = len(checks)
 
-        # Default status
         status = "Pending ⏳"
 
         if score == total:
-            st.success(f"Perfect ({score}/{total})")
+            st.success(f"Perfect ({score}/{total}) 🚀")
         elif score >= total * 0.7:
             st.warning(f"Needs Fix ({score}/{total})")
         else:
             st.error(f"Not Approved ({score}/{total})")
 
-        # SAVE
+        # SAVE TO SHEET
         sheet.append_row([
             name,
             project,
@@ -157,8 +167,9 @@ if st.button("Submit for Review"):
 
         st.success("Submitted for approval 🐝")
 
-# 👨‍💼 ADMIN PANEL
 st.divider()
+
+# 👨‍💼 ADMIN PANEL
 st.subheader("👨‍💼 Admin Approval Panel")
 
 if not df.empty:
