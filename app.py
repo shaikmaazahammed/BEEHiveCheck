@@ -7,7 +7,7 @@ from datetime import datetime
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🖤 PREMIUM + STICKY HEADER
+# 🎨 CLEAN PREMIUM UI
 st.markdown("""
 <style>
 .stApp {
@@ -16,36 +16,21 @@ st.markdown("""
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* STICKY HEADER */
-.header {
-    position: sticky;
-    top: 0;
-    z-index: 999;
-    background-color: #0e0e0e;
-    padding: 20px 0;
-    border-bottom: 1px solid #222;
-}
-
-/* HERO */
-.hero {
+/* HEADER */
+.header-box {
     text-align: center;
-}
-
-/* LOGO */
-.hero img {
-    width: 120px;
-    margin-bottom: 10px;
+    padding: 30px 0 10px 0;
 }
 
 /* TITLE */
-.hero h1 {
+.header-box h1 {
     font-size: 42px;
     margin-bottom: 5px;
     text-shadow: 0 0 12px rgba(250, 213, 27, 0.3);
 }
 
 /* SUBTITLE */
-.hero p {
+.header-box p {
     color: #aaa;
     font-size: 16px;
 }
@@ -81,15 +66,24 @@ section[data-testid="stFileUploader"] {
     border: 1px dashed #333;
 }
 </style>
-
-<div class="header">
-    <div class="hero">
-        <img src="https://raw.githubusercontent.com/shaikmaazahammed/bee-content-review-system/main/assets/logo.png">
-        <h1>BEEHiveCheck</h1>
-        <p>Content Quality Control System</p>
-    </div>
-</div>
 """, unsafe_allow_html=True)
+
+# 🐝 HEADER (STABLE VERSION)
+st.markdown('<div class="header-box">', unsafe_allow_html=True)
+
+st.image("assets/logo.png", width=180)
+
+st.markdown(
+    "<h1>BEEHiveCheck</h1>",
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    "<p>Content Quality Control System</p>",
+    unsafe_allow_html=True
+)
+
+st.markdown('</div>', unsafe_allow_html=True)
 
 st.divider()
 
@@ -147,6 +141,7 @@ caption = st.text_area("Caption")
 
 # 🧠 GRAMMAR
 grammar_ok = True
+
 if caption:
     blob = TextBlob(caption)
     corrected = blob.correct()
