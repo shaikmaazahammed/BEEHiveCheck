@@ -7,32 +7,50 @@ from datetime import datetime
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🎨 CLEAN PREMIUM UI
+# 🎨 UI + HERO HEADER
 st.markdown("""
 <style>
+
+/* 🌑 BASE */
 .stApp {
     background-color: #0e0e0e;
     color: white;
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* HEADER */
-.header-box {
+/* 🐝 HERO */
+.hero-container {
+    width: 100%;
+    background: linear-gradient(135deg, #111111, #1a1a1a);
+    padding: 40px 0;
     text-align: center;
-    padding: 30px 0 10px 0;
+    border-bottom: 1px solid #222;
+}
+
+/* LOGO */
+.hero-container img {
+    width: 140px;
+    margin-bottom: 15px;
 }
 
 /* TITLE */
-.header-box h1 {
+.hero-container h1 {
     font-size: 42px;
     margin-bottom: 5px;
-    text-shadow: 0 0 12px rgba(250, 213, 27, 0.3);
+    text-shadow: 0 0 15px rgba(250, 213, 27, 0.35);
 }
 
 /* SUBTITLE */
-.header-box p {
+.hero-container p {
     color: #aaa;
     font-size: 16px;
+}
+
+/* DIVIDER */
+.hero-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #fad51b, transparent);
+    margin-top: 25px;
 }
 
 /* BUTTON */
@@ -65,25 +83,21 @@ section[data-testid="stFileUploader"] {
     padding: 12px;
     border: 1px dashed #333;
 }
+
+/* SIDEBAR */
+section[data-testid="stSidebar"] {
+    background-color: #111111;
+}
+
 </style>
+
+<div class="hero-container">
+    <img src="https://raw.githubusercontent.com/shaikmaazahammed/bee-content-review-system/main/assets/logo.png">
+    <h1>BEEHiveCheck</h1>
+    <p>Content Quality Control System</p>
+    <div class="hero-divider"></div>
+</div>
 """, unsafe_allow_html=True)
-
-# 🐝 HEADER (STABLE VERSION)
-st.markdown('<div class="header-box">', unsafe_allow_html=True)
-
-st.image("assets/logo.png", width=180)
-
-st.markdown(
-    "<h1>BEEHiveCheck</h1>",
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    "<p>Content Quality Control System</p>",
-    unsafe_allow_html=True
-)
-
-st.markdown('</div>', unsafe_allow_html=True)
 
 st.divider()
 
@@ -104,7 +118,7 @@ sheet = client.open("BEEHiveCheck Data").sheet1
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
-# 📊 SIDEBAR
+# 📊 SIDEBAR ANALYTICS
 st.sidebar.title("📊 Analytics")
 
 if not df.empty and "Score" in df.columns:
@@ -139,7 +153,7 @@ if uploaded_file:
 
 caption = st.text_area("Caption")
 
-# 🧠 GRAMMAR
+# 🧠 GRAMMAR CHECK
 grammar_ok = True
 
 if caption:
