@@ -7,44 +7,78 @@ from datetime import datetime
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🖤 UI (CLEAN + OPTIONAL CURSOR)
+# 🎨 PREMIUM UI
 st.markdown("""
 <style>
 .stApp {
     background-color: #0e0e0e;
     color: white;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-/* 🐝 OPTIONAL BEE CURSOR (enable if it works) */
-/*
-* {
-    cursor: url("https://raw.githubusercontent.com/shaikmaazahammed/bee-content-review-system/main/assets/bee.png") 16 16, auto;
-}
-*/
-
+/* BUTTON */
 div.stButton > button {
-    background-color: #fad51b;
+    background: linear-gradient(135deg, #fad51b, #f5c400);
     color: black;
-    border-radius: 8px;
-    font-weight: bold;
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: none;
+    transition: all 0.3s ease;
+}
+div.stButton > button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0px 8px 20px rgba(250, 213, 27, 0.4);
 }
 
-.stTextArea textarea {
+/* INPUTS */
+.stTextInput input, .stTextArea textarea {
     background-color: #1a1a1a;
     color: white;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+.stTextInput input:focus, .stTextArea textarea:focus {
+    border: 1px solid #fad51b;
+    box-shadow: 0 0 10px rgba(250, 213, 27, 0.3);
 }
 
+/* UPLOAD */
 section[data-testid="stFileUploader"] {
     background-color: #1a1a1a;
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px dashed #333;
+}
+section[data-testid="stFileUploader"]:hover {
+    border: 1px dashed #fad51b;
+}
+
+/* SIDEBAR */
+section[data-testid="stSidebar"] {
+    background-color: #111111;
+}
+
+/* HEADER GLOW */
+h1 {
+    text-shadow: 0 0 10px rgba(250, 213, 27, 0.3);
 }
 </style>
 """, unsafe_allow_html=True)
 
-# 🐝 Title
-st.title("🐝 BEEHiveCheck")
-st.markdown("Content Quality Control System")
+# 🐝 HEADER WITH LOGO
+col1, col2 = st.columns([1,6])
+
+with col1:
+    st.image("assets/logo.png", width=70)
+
+with col2:
+    st.markdown("""
+    <h1 style='margin-bottom:0;'>BEEHiveCheck</h1>
+    <p style='color:gray; margin-top:0;'>Content Quality Control System</p>
+    """, unsafe_allow_html=True)
+
+st.divider()
 
 # 🔐 GOOGLE SHEETS
 scope = [
@@ -63,7 +97,7 @@ sheet = client.open("BEEHiveCheck Data").sheet1
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
-# 📊 SIDEBAR ANALYTICS (SAFE)
+# 📊 SIDEBAR ANALYTICS
 st.sidebar.title("📊 Analytics")
 
 if not df.empty and "Score" in df.columns:
@@ -81,28 +115,25 @@ if not df.empty and "Score" in df.columns:
         top_user = df["Name"].value_counts().idxmax()
         st.sidebar.write(f"🏆 Top Contributor: {top_user}")
 else:
-    st.sidebar.info("No valid data yet")
+    st.sidebar.info("No data yet")
 
 st.divider()
 
-# 👤 INPUT
+# 👤 INPUTS
 name = st.text_input("Your Name")
 project = st.text_input("Project you are working on")
 
-# 📤 Upload
 uploaded_file = st.file_uploader(
     "Upload Content",
     type=["png","jpg","jpeg","mp4"]
 )
 
-# 🖼️ Preview
 if uploaded_file:
     st.image(uploaded_file, caption="Preview", use_column_width=True)
 
-# ✍️ Caption
 caption = st.text_area("Caption")
 
-# 🧠 Grammar Check
+# 🧠 GRAMMAR CHECK
 grammar_ok = True
 
 if caption:
@@ -117,7 +148,7 @@ if caption:
 
 st.divider()
 
-# ✅ Checklist
+# ✅ CHECKLIST
 st.subheader("Checklist")
 
 col1, col2 = st.columns(2)
@@ -134,8 +165,7 @@ with col2:
     graphics = st.checkbox("Approved graphics")
     tone_check = st.checkbox("Tone correct")
 
-# 📌 Confirmation
-confirm = st.checkbox("I confirm all brand guidelines are followed")
+confirm = st.checkbox("I confirm all guidelines are followed")
 
 st.divider()
 
@@ -145,7 +175,7 @@ if st.button("Submit for Review"):
     if not name or not project or not uploaded_file or not caption:
         st.error("❌ Fill all fields")
     elif not confirm:
-        st.error("❌ Please confirm guidelines")
+        st.error("❌ Confirm guidelines")
     else:
 
         checks = [
@@ -171,7 +201,7 @@ if st.button("Submit for Review"):
             result = "Not Approved ❌"
             st.error(f"Not approved ({score}/{total})")
 
-        # 💾 SAVE TO GOOGLE SHEETS
+        # 💾 SAVE
         sheet.append_row([
             name,
             project,
