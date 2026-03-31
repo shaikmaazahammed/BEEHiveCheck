@@ -7,13 +7,47 @@ from datetime import datetime
 
 st.set_page_config(page_title="BEEHiveCheck", layout="wide")
 
-# 🎨 PREMIUM UI
+# 🖤 PREMIUM + STICKY HEADER
 st.markdown("""
 <style>
 .stApp {
     background-color: #0e0e0e;
     color: white;
     font-family: 'Segoe UI', sans-serif;
+}
+
+/* STICKY HEADER */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: #0e0e0e;
+    padding: 20px 0;
+    border-bottom: 1px solid #222;
+}
+
+/* HERO */
+.hero {
+    text-align: center;
+}
+
+/* LOGO */
+.hero img {
+    width: 120px;
+    margin-bottom: 10px;
+}
+
+/* TITLE */
+.hero h1 {
+    font-size: 42px;
+    margin-bottom: 5px;
+    text-shadow: 0 0 12px rgba(250, 213, 27, 0.3);
+}
+
+/* SUBTITLE */
+.hero p {
+    color: #aaa;
+    font-size: 16px;
 }
 
 /* BUTTON */
@@ -27,7 +61,7 @@ div.stButton > button {
     transition: all 0.3s ease;
 }
 div.stButton > button:hover {
-    transform: translateY(-3px) scale(1.02);
+    transform: translateY(-3px);
     box-shadow: 0px 8px 20px rgba(250, 213, 27, 0.4);
 }
 
@@ -38,10 +72,6 @@ div.stButton > button:hover {
     border-radius: 8px;
     border: 1px solid #333;
 }
-.stTextInput input:focus, .stTextArea textarea:focus {
-    border: 1px solid #fad51b;
-    box-shadow: 0 0 10px rgba(250, 213, 27, 0.3);
-}
 
 /* UPLOAD */
 section[data-testid="stFileUploader"] {
@@ -50,33 +80,16 @@ section[data-testid="stFileUploader"] {
     padding: 12px;
     border: 1px dashed #333;
 }
-section[data-testid="stFileUploader"]:hover {
-    border: 1px dashed #fad51b;
-}
-
-/* SIDEBAR */
-section[data-testid="stSidebar"] {
-    background-color: #111111;
-}
-
-/* HEADER GLOW */
-h1 {
-    text-shadow: 0 0 10px rgba(250, 213, 27, 0.3);
-}
 </style>
+
+<div class="header">
+    <div class="hero">
+        <img src="https://raw.githubusercontent.com/shaikmaazahammed/bee-content-review-system/main/assets/logo.png">
+        <h1>BEEHiveCheck</h1>
+        <p>Content Quality Control System</p>
+    </div>
+</div>
 """, unsafe_allow_html=True)
-
-# 🐝 HEADER WITH LOGO
-col1, col2 = st.columns([1,6])
-
-with col1:
-    st.image("assets/logo.png", width=70)
-
-with col2:
-    st.markdown("""
-    <h1 style='margin-bottom:0;'>BEEHiveCheck</h1>
-    <p style='color:gray; margin-top:0;'>Content Quality Control System</p>
-    """, unsafe_allow_html=True)
 
 st.divider()
 
@@ -97,11 +110,10 @@ sheet = client.open("BEEHiveCheck Data").sheet1
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
-# 📊 SIDEBAR ANALYTICS
+# 📊 SIDEBAR
 st.sidebar.title("📊 Analytics")
 
 if not df.empty and "Score" in df.columns:
-
     st.sidebar.metric("Total Submissions", len(df))
 
     scores = pd.to_numeric(
@@ -119,7 +131,7 @@ else:
 
 st.divider()
 
-# 👤 INPUTS
+# 👤 INPUT
 name = st.text_input("Your Name")
 project = st.text_input("Project you are working on")
 
@@ -133,9 +145,8 @@ if uploaded_file:
 
 caption = st.text_area("Caption")
 
-# 🧠 GRAMMAR CHECK
+# 🧠 GRAMMAR
 grammar_ok = True
-
 if caption:
     blob = TextBlob(caption)
     corrected = blob.correct()
@@ -201,7 +212,6 @@ if st.button("Submit for Review"):
             result = "Not Approved ❌"
             st.error(f"Not approved ({score}/{total})")
 
-        # 💾 SAVE
         sheet.append_row([
             name,
             project,
